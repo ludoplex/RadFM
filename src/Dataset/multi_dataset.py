@@ -28,8 +28,7 @@ class umls_extractor:
         
     def extract(self,text):
         doc = self.nlp(text)
-        ent_set = doc.ents
-        return ent_set
+        return doc.ents
 
 def find_position(label, key_embeddings):
     loss_reweight = torch.ones(label.shape)

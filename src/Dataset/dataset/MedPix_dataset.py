@@ -132,7 +132,7 @@ class MedPix_Single_Dataset(Dataset):
         idx = (self.down_sample_ratio*idx +random.randint(0,self.down_sample_ratio-1))%len(self.case_list)
         sample = self.case_list.iloc[idx]
         answer = sample['context']
-        if sample['type'] == "modality" or sample['type'] == "plane":
+        if sample['type'] in ["modality", "plane"]:
             pp = random.random()
             if pp>0.5:
                 question = random.sample(self.promt[sample['type']],1)[0]
@@ -150,13 +150,13 @@ class MedPix_Single_Dataset(Dataset):
                         pass
                     answer = random.sample(sample_list,1)[0]
                     question = question.format(object = answer)
-                    answer = 'no'        
+                    answer = 'no'
         else:
             question = random.sample(self.promt[sample['type']],1)[0]
         p = random.random()
         images = []
-        if p>0.5:
-            try:
+        try:
+            if p>0.5:
                 images.append(
                     {
                         "image": self.get_image(self.img_root+sample['name']),
@@ -164,11 +164,8 @@ class MedPix_Single_Dataset(Dataset):
                             "question": len(question)
                         }
                     }
-                )   
-            except:
-                pass
-        else:
-            try:
+                )
+            else:
                 images.append(
                     {
                         "image": self.get_image(self.img_root+sample['name']),
@@ -176,9 +173,9 @@ class MedPix_Single_Dataset(Dataset):
                             "question": 0 
                         }
                     }
-                )   
-            except:
-                pass   
+                )
+        except:
+            pass
         return {
             "image_dict": images,
             "question": str(question),
@@ -318,7 +315,7 @@ class MedPix_Multi_Dataset(Dataset):
     def __getitem__(self, idx):
         sample = self.case_list.iloc[idx]
         answer = str(sample['context']).replace('• ','')
-        question = random.sample(self.promt[sample['type']],1)[0]    
+        question = random.sample(self.promt[sample['type']],1)[0]
         #question = random.sample(self.promt[sample['type']],1)[0]
         history = sample['history']
         if history is not None:
@@ -331,9 +328,9 @@ class MedPix_Multi_Dataset(Dataset):
         image_names = sample['name'].split(',')
         p = random.random()
         images = []
-        if p>0.5:
-            for pp in  image_names:
-                try:
+        for pp in image_names:
+            try:
+                if p>0.5:
                     images.append(
                         {
                             "image": self.get_image(self.img_root+pp),
@@ -341,12 +338,8 @@ class MedPix_Multi_Dataset(Dataset):
                                 "question": len(question)
                             }
                         }
-                    )    
-                except:
-                    pass
-        else:
-            for pp in  image_names:
-                try:
+                    )
+                else:
                     images.append(
                         {
                             "image": self.get_image(self.img_root+pp),
@@ -354,9 +347,9 @@ class MedPix_Multi_Dataset(Dataset):
                                 "question": 0
                             }
                         }
-                    ) 
-                except:
-                    pass
+                    )
+            except:
+                pass
         if  sample['type'] =="findings":
             pattern = r"\d+(\.\d+)?\s*(mm|cm|x\d+\s*cm)"
             answer = re.sub(pattern, "", answer)
@@ -400,8 +393,8 @@ class MedPix_QA_Dataset(Dataset):
             pass
         p = random.random()
         images = []
-        if p>0.5:
-            try:
+        try:
+            if p>0.5:
                 images.append(
                     {
                         "image": self.get_image(self.img_root+sample['name']),
@@ -409,11 +402,8 @@ class MedPix_QA_Dataset(Dataset):
                             "question": len(question)
                         }
                     }
-                )   
-            except:
-                pass
-        else:
-            try:
+                )
+            else:
                 images.append(
                     {
                         "image": self.get_image(self.img_root+sample['name']),
@@ -421,11 +411,11 @@ class MedPix_QA_Dataset(Dataset):
                             "question": 0 
                         }
                     }
-                )   
-            except:
-                pass  
+                )
+        except:
+            pass
         if len(images) > 10:
-            images = random.sample(images,10) 
+            images = random.sample(images,10)
         return {
             "image_dict": images,
             "question": str(question),

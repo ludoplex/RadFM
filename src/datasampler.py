@@ -9,16 +9,13 @@ from New_Dataset.multi_dataset import multi_dataset
 
 def make_batch(index_list, batch_size, drop_last):  
     if drop_last:
-        batches = []
         whole_batch_num = len(index_list)//batch_size
-        for _ in range(whole_batch_num):
-            batches.append(index_list[batch_size*_:(batch_size*(_+1))])
     else:
-        batches = []
         whole_batch_num = math.ceil(len(index_list)/batch_size)
-        for _ in range(whole_batch_num):
-            batches.append(index_list[batch_size*_:(batch_size*(_+1))])
-    return batches   
+    return [
+        index_list[batch_size * _ : (batch_size * (_ + 1))]
+        for _ in range(whole_batch_num)
+    ]   
     
 def batch_generation(dataset,batch_size_2D, batch_size_3D,drop_last=False,shuffle = True):
     
@@ -27,16 +24,15 @@ def batch_generation(dataset,batch_size_2D, batch_size_3D,drop_last=False,shuffl
     index_2D = list(range(len_2D))
     index_3D = list(range(len_2D,(len_2D+len_3D)))
     assert len(index_2D) + len(index_3D) == len(dataset.data_whole)
-    
+
     if shuffle:   
         random.shuffle(index_2D)
         random.shuffle(index_3D)
-        
+
     batch_2D = make_batch(index_2D, batch_size_2D, drop_last)
     batch_3D = make_batch(index_3D, batch_size_3D, drop_last)
-        
-    batch_chunk = batch_2D + batch_3D 
-    return batch_chunk               
+
+    return batch_2D + batch_3D               
     
 class My_DistributedBatchSampler(Sampler):
     """ Iterable wrapper that distributes data across multiple workers.

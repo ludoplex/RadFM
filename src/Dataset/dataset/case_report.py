@@ -33,7 +33,7 @@ class CaseReport_dataset(Dataset):
     def __getitem__(self, idx):
         # lang_x, vision_x, attention_mask, labels
         sample = self.question_list.iloc[idx]
-        
+
         PMC_id = sample['PMC_id']
         img_ref = literal_eval(sample['img_ref'])
         context = str(sample['context'])
@@ -42,9 +42,9 @@ class CaseReport_dataset(Dataset):
             first_sentence = sentences[0]
             last_sentences = ". ".join(context.split('.')[-4:])
             context = first_sentence + '. ' + last_sentences
-        question = str(context) + '\n' + str(sample['question']).replace('Q:','') 
+        question = context + '\n' + str(sample['question']).replace('Q:','')
         answer = str(sample['answer']).replace('A:','')
-        
+
         images = []
         for img_id in img_ref:
             #print(img_ref)
@@ -52,7 +52,7 @@ class CaseReport_dataset(Dataset):
             try:
                 image = Image.open(img_path).convert('RGB')   
                 image = self.transform(image)
-                
+
                 p = random.random()
                 if random.random() >0.5:
                     images.append({'image':image, "position": {"question":len(question)}})    
@@ -60,7 +60,7 @@ class CaseReport_dataset(Dataset):
                     images.append({'image':image, "position": {"question":len(context)}}) 
             except:
                 continue        
-    
+
         return {
             "image_dict": images,
             "question": question,

@@ -78,14 +78,14 @@ class Radio_Modality_Dataset(Dataset):
             image = self.resize_image(image)
         except:
             image = np.random.randn(3,512,512,4)
-            
+
         # image = np.load(img_path) # c,w,h,d
         image = (image-image.min())/(image.max()-image.min())
         contain_nan = (True in np.isnan(image))
         if contain_nan:
             image = np.random.randn(3,512,512,4)
         image = torch.from_numpy(image).float()
-        
+
         if random.random() < 0.5:
             #直接回答
             answer = self.caption_list[index]
@@ -94,14 +94,13 @@ class Radio_Modality_Dataset(Dataset):
             modality = self.caption_list[index]
             if random.random() < 0.5:
                     # 回答为yes
-                question = random.choice(self.modality_prompts).replace('modality',modality)
                 answer = 'yes'
             else:
                 select_modality = modality
                 while select_modality == modality:
                     select_modality = random.choice(list(self.modality_sets))
-                question = random.choice(self.modality_prompts).replace('modality',modality)
                 answer = 'no'
+            question = random.choice(self.modality_prompts).replace('modality',modality)
         if random.random() < 0.5:
             image_dict = {
                 "image": image,
@@ -208,8 +207,8 @@ class RadioCaption_Dataset(Dataset):
         if contain_nan:
             image = np.random.randn(3,512,512,4)
         image = torch.from_numpy(image).float()
-        answer = 'Finding: ' + str(finding) + 'Impression: ' + str(impression) 
-        
+        answer = f'Finding: {str(finding)}Impression: {str(impression)}' 
+
         image_dict = []
         for idx in range(image.shape[0]):
             if random.random() < 0.5:
@@ -253,19 +252,19 @@ class Radiofeatures_Dataset(Dataset):
         patient_pre = data_index['pre']
         patient_pat = data_index['pat']
         img_path = data_index['npy_path']
-        radiographic_features = ' '.join(data_index['radiographic_features'])
         image = np.load(img_path)
         image = (image-image.min())/(image.max()-image.min())
         contain_nan = (True in np.isnan(image))
         if contain_nan:
             image = np.random.randn(3,512,512,4)
         image = torch.from_numpy(image).float()
-        
+
         if random.random() < 0.5:
             articles = ' '.join(data_index['articles'])
             prompt_question = random.choice(self.caption_prompts)
             question = patient_pat + ' ' + patient_pre + ' ' + prompt_question
-            answer = articles + 'The Radiographic features can be summarized as follows.' + radiographic_features
+            radiographic_features = ' '.join(data_index['radiographic_features'])
+            answer = f'{articles}The Radiographic features can be summarized as follows.{radiographic_features}'
         else:
             articles = data_index['title']
             if random.random() < 0.5:
@@ -274,7 +273,7 @@ class Radiofeatures_Dataset(Dataset):
                 answer = 'yes'
             else:
                 select_articles = articles
-                while select_articles == articles:
+                while select_articles == select_articles:
                     select_articles = random.choice(list(self.article_sets))
                 question = random.choice(self.disease_prompts).replace('disease',select_articles)
                 answer = 'no'
@@ -295,7 +294,7 @@ class Radiofeatures_Dataset(Dataset):
                     }
                 }
             image_dict.append(dict_idx)
-            
+
         return {
             "image_dict": image_dict,
             "question": question,

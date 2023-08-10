@@ -98,11 +98,11 @@ class DataCollator(object):
 def main():
     parser = transformers.HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
-    
+
     training_args.data_sampler = My_DistributedBatchSampler
     print("Setup Data")
     Test_dataset = multi_dataset(text_tokenizer = model_args.tokenizer_path,test_split = data_args.test_split)
-    
+
     Test_dataloader = DataLoader(
             Test_dataset,
             batch_size=1,
@@ -113,7 +113,7 @@ def main():
             collate_fn=None,
             drop_last=False,
     )  
-    
+
     print("Setup Model")
     model = MultiLLaMAForCausalLM(
         lang_model_path=model_args.lang_encoder_path,
@@ -122,13 +122,13 @@ def main():
     # ckpt.pop('embedding_layer.figure_token_weight')
     model.load_state_dict(ckpt,strict=False)
     model = model.to('cuda')
-    model.eval() 
-    with open('output_whole_2_epoch' + data_args.test_split+'.csv', mode='w') as outfile:
+    model.eval()
+    with open(f'output_whole_2_epoch{data_args.test_split}.csv', mode='w') as outfile:
         writer = csv.writer(outfile)
         writer.writerow(["Question", "Ground Truth","Pred",'belong_to'])
         cc = 0
         for sample in tqdm.tqdm(Test_dataloader):
-            
+
             question = sample["question"]
             belong_to = sample['belong_to']
             # img_pp = sample['img_path']
