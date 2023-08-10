@@ -47,36 +47,29 @@ class Paper_Inline_dataset(Dataset):
     def random_sample_sentence(self, sentences_list, PMC_name):
         sentences_length = len(sentences_list)
         p = random.random()
-        if p>=0.5:
-            if len(sentences_list) > self.sample_sentence_length:
+        if len(sentences_list) > self.sample_sentence_length:
+            if p>=0.5:
                 start = random.randint(0, sentences_length-self.sample_sentence_length)
-                sentences_list = sentences_list[start:(start + self.sample_sentence_length)]
-        else:
-            if len(sentences_list) > self.sample_sentence_length:
+            else:
                 sample_start = []
                 for sentence_id in range(len(sentences_list)):
                     if sentences_list[sentence_id]['img_ref'] != []:
-                        if sentence_id-10 < 0:
+                        if sentence_id < 10:
                             sample_start.append(0)
+                        elif sentence_id-10 > sentences_length-self.sample_sentence_length:
+                            sample_start.append(sentences_length-self.sample_sentence_length)
                         else:
-                            if sentence_id-10 > sentences_length-self.sample_sentence_length:
-                                sample_start.append(sentences_length-self.sample_sentence_length)
-                            else:
-                                sample_start.append(sentence_id-10)
-                if sample_start == []:
+                            sample_start.append(sentence_id-10)
+                if not sample_start:
                     start = random.randint(0, sentences_length-self.sample_sentence_length)
-                    sentences_list = sentences_list[start:(start + self.sample_sentence_length)]
                 else:
                     start = sample_start[random.randint(0, len(sample_start)-1)]
-                    sentences_list = sentences_list[start:(start + self.sample_sentence_length)]
-            
+            sentences_list = sentences_list[start:(start + self.sample_sentence_length)]
         text = ''
         images = []
         for ix in sentences_list:
             sentence = ix
-            if sentence["img_ref"] == []:
-                text = text + sentence['text']
-            else:
+            if sentence["img_ref"] != []:
                 if len(images)+len(sentence["img_ref"]) > self.max_img_size:
                     break
                 for img_id in sentence["img_ref"]:
@@ -88,10 +81,10 @@ class Paper_Inline_dataset(Dataset):
                             images.append({'image':image, "position": {"answer":len(text)}})    
                         except:
                             continue
-                text = text + sentence['text']            
+            text = text + sentence['text']
         question = ''
         answer = text
-        
+
         return images,question,answer
 
 # csv_path = '/home/cs/leijiayu/wuchaoyi/multi_modal/Data/train_paper.csv'    

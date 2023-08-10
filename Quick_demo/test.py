@@ -23,11 +23,13 @@ def get_tokenizer(tokenizer_path, max_img_size = 100, image_num = 32):
         special_token = {"additional_special_tokens": ["<image>","</image>"]}
         for i in range(max_img_size):
             image_padding_token = ""
-            
+
             for j in range(image_num):
-                image_token = "<image"+str(i*image_num+j)+">"
+                image_token = f"<image{str(i * image_num + j)}>"
                 image_padding_token = image_padding_token + image_token
-                special_token["additional_special_tokens"].append("<image"+str(i*image_num+j)+">")
+                special_token["additional_special_tokens"].append(
+                    f"<image{str(i * image_num + j)}>"
+                )
             image_padding_tokens.append(image_padding_token)
             text_tokenizer.add_special_tokens(
                 special_token
@@ -36,7 +38,7 @@ def get_tokenizer(tokenizer_path, max_img_size = 100, image_num = 32):
             text_tokenizer.pad_token_id = 0
             text_tokenizer.bos_token_id = 1
             text_tokenizer.eos_token_id = 2    
-    
+
     return  text_tokenizer,image_padding_tokens    
 
 def combine_and_preprocess(question,image_list,image_padding_tokens):
@@ -46,31 +48,30 @@ def combine_and_preprocess(question,image_list,image_padding_tokens):
                 transforms.ToTensor(),
             ])
     images  = []
-    new_qestions = [_ for _ in question]
-    padding_index = 0
-    for img in image_list:
+    new_qestions = list(question)
+    ## pre-process the img first
+    target_H = 512
+    target_W = 512
+    target_D = 4
+    for padding_index, img in enumerate(image_list):
         img_path = img['img_path']
         position = img['position']
-        
-        
-        
-        image = Image.open(img_path).convert('RGB')   
+
+
+
+        image = Image.open(img_path).convert('RGB')
         image = transform(image)
         image = image.unsqueeze(0).unsqueeze(-1) # c,w,h,d
-        
-        ## pre-process the img first
-        target_H = 512 
-        target_W = 512 
-        target_D = 4 
+
         # This can be different for 3D and 2D images. For demonstration we here set this as the default sizes for 2D images. 
         images.append(torch.nn.functional.interpolate(image, size = (target_H,target_W,target_D)))
-        
+
         ## add img placeholder to text
-        new_qestions[position] = "<image>"+ image_padding_tokens[padding_index] +"</image>" + new_qestions[position]
-        padding_index +=1
-    
+        new_qestions[
+            position
+        ] = f"<image>{image_padding_tokens[padding_index]}</image>{new_qestions[position]}"
     vision_x = torch.cat(images,dim = 1).unsqueeze(0) #cat tensors and expand the batch_size dim
-    text = ''.join(new_qestions) 
+    text = ''.join(new_qestions)
     return [text], vision_x, 
     
     

@@ -78,9 +78,11 @@ class multi_dataset_close(Dataset):
             for i in range(max_img_size):
                 image_padding_token = ""
                 for j in range(image_num):
-                    image_token = "<image"+str(i*image_num+j)+">"
+                    image_token = f"<image{str(i * image_num + j)}>"
                     image_padding_token = image_padding_token + image_token
-                    special_token["additional_special_tokens"].append("<image"+str(i*image_num+j)+">")
+                    special_token["additional_special_tokens"].append(
+                        f"<image{str(i * image_num + j)}>"
+                    )
                 self.image_padding_tokens.append(image_padding_token)
             self.text_tokenizer.add_special_tokens(
                 special_token
@@ -100,75 +102,96 @@ class multi_dataset_close(Dataset):
             chestxray_dataset_bn = Binary_Dataset(csv_path = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/chestxray_balance_test.csv',  
                                 prompt_json_file = '/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/dataset/yes_no_prompt.json')
             self.dataset_reflect['chestxray_dataset_bn'] = chestxray_dataset_bn
-            self.data_whole_2D = self.data_whole_2D +  [{'chestxray_dataset_bn':i} for i in range(len(chestxray_dataset_bn))]
+            self.data_whole_2D += [
+                {'chestxray_dataset_bn': i}
+                for i in range(len(chestxray_dataset_bn))
+            ]
             print('chestxray_dataset_bn loaded')
-            
+
             pcxr_dataset_bn = Binary_Dataset(csv_path = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/pcxr_balance_test.csv',  
                                         prompt_json_file = '/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/dataset/yes_no_prompt.json')
             self.dataset_reflect['pcxr_dataset_bn'] = pcxr_dataset_bn
-            self.data_whole_2D = self.data_whole_2D +  [{'pcxr_dataset_bn':i} for i in range(len(pcxr_dataset_bn))]
+            self.data_whole_2D += [
+                {'pcxr_dataset_bn': i} for i in range(len(pcxr_dataset_bn))
+            ]
             print('pcxr_dataset_bn loaded')
-            
+
             mammo_dataset_bn = Binary_Dataset(csv_path = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/mammo_balance_test.csv',  
                                         prompt_json_file = '/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/dataset/yes_no_prompt.json')
             self.dataset_reflect['mammo_dataset_bn'] = mammo_dataset_bn
-            self.data_whole_2D = self.data_whole_2D +  [{'mammo_dataset_bn':i} for i in range(len(mammo_dataset_bn))]
+            self.data_whole_2D += [
+                {'mammo_dataset_bn': i} for i in range(len(mammo_dataset_bn))
+            ]
             print('mammo_dataset_bn loaded')
-            
+
             spinexr_dataset_bn = Binary_Dataset(csv_path = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/spinexr_balance_test.csv',  
                                         prompt_json_file = '/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/dataset/yes_no_prompt.json')
             self.dataset_reflect['spinexr_dataset_bn'] = spinexr_dataset_bn
-            self.data_whole_2D = self.data_whole_2D +  [{'spinexr_dataset_bn':i} for i in range(len(spinexr_dataset_bn))]
+            self.data_whole_2D += [
+                {'spinexr_dataset_bn': i} for i in range(len(spinexr_dataset_bn))
+            ]
             print('spinexr_dataset_bn loaded')
-            
+
             radiomodality_dataset = Radio_Modality_Dataset(csv_path = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/radio_modality_test.csv',  
                                 prompt_json_file = '/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/dataset/modality_prompt.json',
                                 modality_json_file = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/modality_set.json')
             self.dataset_reflect['radiomodality_dataset'] = radiomodality_dataset
-            self.data_whole_3D = self.data_whole_3D +  [{'radiomodality_dataset':i} for i in range(len(radiomodality_dataset))]
+            self.data_whole_3D += [
+                {'radiomodality_dataset': i}
+                for i in range(len(radiomodality_dataset))
+            ]
             print('radiomodality_dataset loaded')
-            
+
             ### multi-label ###
             chestxray_dataset = ChestXray_Dataset(csv_path = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/chestxray_test.csv',  
                                 prompt_json_file = '/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/dataset/cls_prompt.json')
             self.dataset_reflect['chestxray_dataset'] = chestxray_dataset
-            self.data_whole_2D = self.data_whole_2D +  [{'chestxray_dataset':i} for i in range(len(chestxray_dataset))]
+            self.data_whole_2D += [
+                {'chestxray_dataset': i} for i in range(len(chestxray_dataset))
+            ]
             print('chestxray_dataset loaded')
-            
+
             pcxr_dataset = ChestXray_Dataset(csv_path = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/pcxr_test.csv',  
                                 prompt_json_file = '/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/dataset/cls_prompt.json')
             self.dataset_reflect['pcxr_dataset'] = pcxr_dataset
-            self.data_whole_2D = self.data_whole_2D +  [{'pcxr_dataset':i} for i in range(len(pcxr_dataset))]
+            self.data_whole_2D += [{'pcxr_dataset':i} for i in range(len(pcxr_dataset))]
             print('pcxr_dataset loaded')
-            
+
             mammo_dataset = ChestXray_Dataset(csv_path = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/mammo_test.csv',  
                                         prompt_json_file = '/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/dataset/mammo_prompt.json')
             self.dataset_reflect['mammo_dataset'] = mammo_dataset
-            self.data_whole_2D = self.data_whole_2D +  [{'mammo_dataset':i} for i in range(len(mammo_dataset))]
+            self.data_whole_2D += [{'mammo_dataset':i} for i in range(len(mammo_dataset))]
             print('mammo_dataset loaded')
-            
+
             spinexr_dataset = ChestXray_Dataset(csv_path = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/spinexr_test.csv',  
                                         prompt_json_file = '/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/dataset/spinexr_prompt.json')
             self.dataset_reflect['spinexr_dataset'] = spinexr_dataset
-            self.data_whole_2D = self.data_whole_2D +  [{'spinexr_dataset':i} for i in range(len(spinexr_dataset))]
+            self.data_whole_2D += [
+                {'spinexr_dataset': i} for i in range(len(spinexr_dataset))
+            ]
             print('spinexr_dataset loaded')
 
             medpix_single_dataset = MedPix_Single_Dataset(csv_path = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/MedPix_single_test_close.csv')
             self.dataset_reflect['medpix_single_dataset'] = medpix_single_dataset
-            self.data_whole_2D = self.data_whole_2D +  [{'medpix_single_dataset':i} for i in range(len(medpix_single_dataset))]
+            self.data_whole_2D += [
+                {'medpix_single_dataset': i}
+                for i in range(len(medpix_single_dataset))
+            ]
             print('medpix_single_dataset loaded')
-            
+
             vqarad_dataset = PMCVQA_Dataset(csv_path = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/vqarad_test.csv')
             self.dataset_reflect['vqarad_dataset'] = vqarad_dataset
-            self.data_whole_2D = self.data_whole_2D +  [{'vqarad_dataset':i} for i in range(len(vqarad_dataset))]
+            self.data_whole_2D += [
+                {'vqarad_dataset': i} for i in range(len(vqarad_dataset))
+            ]
             print('vqarad_dataset loaded')
-            
+
             slake_dataset = PMCVQA_Dataset(csv_path = '/gpfs/home/cs/leijiayu/wuchaoyi/wangyingjie/src/New_Dataset/data_csv/slakevqa_test.csv')
             self.dataset_reflect['slake_dataset'] = slake_dataset
-            self.data_whole_2D = self.data_whole_2D +  [{'slake_dataset':i} for i in range(len(slake_dataset))]
+            self.data_whole_2D += [{'slake_dataset':i} for i in range(len(slake_dataset))]
             print('slake_dataset loaded')
-        
-        
+
+
         self.data_whole = self.data_whole_2D + self.data_whole_3D
         random.shuffle(self.data_whole)
         
@@ -248,21 +271,19 @@ class multi_dataset_close(Dataset):
         question = str(question)
         answer = str(answer)
         ref_image = []
-        question_list = [[] for _ in range(len(str(question)))]
-        answer_list = [[] for _ in range(len(str(answer)))]
+        question_list = [[] for _ in range(len(question))]
+        answer_list = [[] for _ in range(len(answer))]
         for index, image in enumerate(images):
             ref_image.append(image["image"])
             position = image["position"]
             position = list(position.items())[0]
             if position[0] == 'question':
                 insert_loc = position[1] -1
-                if insert_loc < 0:
-                    insert_loc = 0
+                insert_loc = max(insert_loc, 0)
                 question_list[insert_loc].append(index)
             if position[0] == 'answer':
                 insert_loc = position[1] -1
-                if insert_loc < 0:
-                    insert_loc = 0
+                insert_loc = max(insert_loc, 0)
                 answer_list[insert_loc].append(index)
         new_question = ''
         new_answer = ''
@@ -276,7 +297,7 @@ class multi_dataset_close(Dataset):
                     except:
                         print("Error: out of max image input size")
                 new_question = new_question + question[char_i]
-        
+
         for char_i in range(len(answer)):
             if answer_list[char_i] == []:
                 new_answer = new_answer + answer[char_i]
@@ -287,7 +308,7 @@ class multi_dataset_close(Dataset):
                     except:
                         print("Error: out of max image input size")
                 new_answer = new_answer + answer[char_i]
-                
+
         new_answer = new_answer.replace('•','')
         return ref_image,new_question,new_answer
                 

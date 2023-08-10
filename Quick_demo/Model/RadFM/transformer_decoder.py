@@ -33,9 +33,8 @@ class TransformerDecoder(nn.Module):
         T,B,C = memory.shape
         intermediate = []
         atten_layers = []
-        for n,layer in enumerate(self.layers):
-   
-            residual=True
+        residual=True
+        for layer in self.layers:
             output,ws = layer(output, memory, tgt_mask=tgt_mask,
                            memory_mask=memory_mask,
                            tgt_key_padding_mask=tgt_key_padding_mask,
@@ -145,7 +144,7 @@ class TransformerDecoderLayer(nn.Module):
 
 
 def _get_clones(module, N):
-    return nn.ModuleList([copy.deepcopy(module) for i in range(N)])
+    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
 
 
 
